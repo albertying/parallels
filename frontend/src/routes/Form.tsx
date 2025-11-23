@@ -18,9 +18,31 @@ export default function Form() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Profile Created:", form);
+
+    try {
+      const response = await fetch("http://localhost:3000/profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create profile");
+      }
+
+      const data = await response.json();
+      console.log("Profile Created:", data);
+
+      // Reset form or show success message
+      alert("Profile created successfully!");
+    } catch (error) {
+      console.error("Error creating profile:", error);
+      alert("Failed to create profile. Please try again.");
+    }
   };
 
   return (
@@ -77,7 +99,7 @@ export default function Form() {
             <div>
               <label className="block text-sm font-medium mb-1">Hobbies</label>
               <Textarea
-                name="interests"
+                name="hobbies"
                 value={form.hobbies}
                 onChange={handleChange}
                 placeholder="e.g. hiking, music, gaming"

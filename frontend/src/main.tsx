@@ -4,13 +4,14 @@ import "./index.css";
 import Form from "./routes/Form.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
+import Graph from "./Graph.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Form />} />
-        <Route path="/network" element={<Form />} />
+        <Route path="/network" element={<Graph />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
