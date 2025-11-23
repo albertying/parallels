@@ -93,15 +93,12 @@ app.post("/profile", async (req, res) => {
   try {
     const { name, age, major, interests, hobbies, bio } = req.body;
 
-    // Validate required fields
     if (!name || !age || !major || !interests || !hobbies || !bio) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    // Create text for embedding (interests, hobbies, bio)
     const textToEmbed = `Interests: ${interests}\nHobbies: ${hobbies}\nBio: ${bio}`;
 
-    // Get embedding from OpenAI
     const embeddingResponse = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input: textToEmbed,
@@ -109,7 +106,6 @@ app.post("/profile", async (req, res) => {
 
     const embedding = embeddingResponse.data[0].embedding;
 
-    // Create and save profile
     const profile = new Profile({
       name,
       age: parseInt(age),
@@ -141,28 +137,54 @@ app.post("/profile", async (req, res) => {
   }
 });
 
-// Get all profiles
-app.get("/profiles", async (req, res) => {
+app.get("/similar/:id", async (req, res) => {
   try {
-    const profiles = await Profile.find().select("-embedding");
-    res.json(profiles);
-  } catch (err) {
-    console.error("Error fetching profiles:", err);
-    res.status(500).json({ error: "Failed to fetch profiles" });
-  }
-});
+    const { id } = req.params;
+    const limit = parseInt(req.query.limit) || 10;
 
-// Get single profile by ID
-app.get("/profile/:id", async (req, res) => {
-  try {
-    const profile = await Profile.findById(req.params.id);
+    const profile = await Profile.findById(id);
+
     if (!profile) {
       return res.status(404).json({ error: "Profile not found" });
     }
-    res.json(profile);
+
+    const results = await Profile.aggregate([
+      {
+        $vectorSearch: {
+          index: "vector_index",
+          path: "embedding",
+          queryVector: profile.embedding,
+          numCandidates: 100,
+          limit: limit + 1,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          age: 1,
+          major: 1,
+          interests: 1,
+          hobbies: 1,
+          bio: 1,
+          createdAt: 1,
+          score: { $meta: "vectorSearchScore" },
+        },
+      },
+    ]);
+
+    const similarProfiles = results.filter((p) => p._id.toString() !== id);
+
+    res.json({
+      originalProfile: {
+        id: profile._id,
+        name: profile.name,
+      },
+      similarProfiles: similarProfiles.slice(0, limit),
+    });
   } catch (err) {
-    console.error("Error fetching profile:", err);
-    res.status(500).json({ error: "Failed to fetch profile" });
+    console.error("Similar profiles search error:", err);
+    res.status(500).json({ error: "Failed to find similar profiles" });
   }
 });
 
