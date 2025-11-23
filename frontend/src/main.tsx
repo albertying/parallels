@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
@@ -8,3 +9,22 @@ createRoot(root).render(
     <App />
   </React.StrictMode>,
 )
+=======
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import Form from "./routes/Form.tsx";
+import { BrowserRouter } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Form />} />
+        <Route path="/network" element={<Form />} />
+      </Routes>
+    </BrowserRouter>
+  </StrictMode>,
+);
+>>>>>>> 9adbd683cf0e38c638a4d28acbce341e3deac49f
