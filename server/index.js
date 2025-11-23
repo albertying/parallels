@@ -138,6 +138,65 @@ app.post("/profile", async (req, res) => {
   }
 });
 
+// Create profile with a provided id in the URL path
+app.post("/profile/:id", async (req, res) => {
+  try {
+    const { id } = req.params
+    const { name, age, major, interests, hobbies, bio } = req.body
+
+    if (!name || !age || !major || !interests || !hobbies || !bio) {
+      return res.status(400).json({ error: "All fields are required" })
+    }
+
+    // Check if a profile with this id already exists
+    const existing = await Profile.findById(id)
+    if (existing) {
+      return res.status(409).json({ error: "Profile with this id already exists" })
+    }
+
+    const textToEmbed = `Interests: ${interests}\nHobbies: ${hobbies}\nBio: ${bio}`
+
+    const embeddingResponse = await openai.embeddings.create({
+      model: "text-embedding-3-small",
+      input: textToEmbed,
+    })
+
+    const embedding = embeddingResponse.data[0].embedding
+
+    // Allow using the provided id as the _id field. If it's not a valid ObjectId,
+    // Mongoose will still accept a string id for _id, so we pass it through.
+    const profile = new Profile({
+      _id: id,
+      name,
+      age: parseInt(age),
+      major,
+      interests,
+      hobbies,
+      bio,
+      embedding,
+    })
+
+    await profile.save()
+
+    res.status(201).json({
+      message: "Profile created successfully",
+      profile: {
+        id: profile._id,
+        name: profile.name,
+        age: profile.age,
+        major: profile.major,
+        interests: profile.interests,
+        hobbies: profile.hobbies,
+        bio: profile.bio,
+        createdAt: profile.createdAt,
+      },
+    })
+  } catch (err) {
+    console.error("Profile creation (by id) error:", err)
+    res.status(500).json({ error: "Failed to create profile" })
+  }
+})
+
 app.get("/similar/:id", async (req, res) => {
   try {
     const { id } = req.params;
