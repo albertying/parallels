@@ -1,3 +1,4 @@
+
 # Dependency directories
 /node_modules
 /vendor
@@ -61,3 +62,4 @@ __pycache__/
 *~
 .#*
 *.swp
+>>>>>>> main
