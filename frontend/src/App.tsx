@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import Graph from './Graph'
+import { AuthProvider, useAuth } from './auth/AuthContext'
+import LoginRegister from './auth/LoginRegister'
 
 type Person = { id: number; name: string; email?: string }
 
@@ -28,8 +30,11 @@ export default function App() {
   }, [])
 
   return (
+    <AuthProvider>
     <div style={{ padding: 20 }}>
       <h1>Parallels — DB Query + Graph</h1>
+
+      <AuthArea />
 
       <div className="card">
         {loading && <p>Loading...</p>}
@@ -48,6 +53,23 @@ export default function App() {
         <Graph />
       </section>
     </div>
+    </AuthProvider>
   )
+}
+
+function AuthArea() {
+  const { user, token, logout } = useAuth();
+  return (
+    <div style={{ marginBottom: 18 }}>
+      {user ? (
+        <div>
+          Logged in as <strong>{user.name}</strong> — <button onClick={logout}>Logout</button>
+          <div style={{ marginTop: 8 }}>Token: {token ? token.slice(0, 40) + '...' : 'none'}</div>
+        </div>
+      ) : (
+        <LoginRegister />
+      )}
+    </div>
+  );
 }
  
