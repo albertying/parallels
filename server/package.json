@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -17,6 +18,8 @@
     "fs": "^0.0.1-security",
     "mongoose": "^9.0.0",
     "node-fetch": "^2.7.0",
-    "openai": "^6.9.1"
+    "openai": "^6.9.1",
+    "bcrypt": "^5.1.0",
+    "jsonwebtoken": "^9.0.0"
   }
 }

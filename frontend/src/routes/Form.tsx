@@ -30,11 +30,19 @@ export default function Form() {
         body: JSON.stringify(form),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to create profile");
+      const text = await response.text();
+      let data = null;
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch (e) {
+        console.warn('Response was not valid JSON:', text);
       }
 
-      const data = await response.json();
+      if (!response.ok) {
+        const errMsg = data && data.error ? data.error : 'Failed to create profile';
+        throw new Error(errMsg);
+      }
+
       console.log("Profile Created:", data);
 
       // Reset form or show success message
