@@ -4,10 +4,16 @@ import Graph from './Graph'
 import Auth from './routes/Auth'
 import LoginRegister from './auth/LoginRegister'
 import { AuthProvider, useAuth } from './auth/AuthContext'
+import Network from './Network'
 
 type Person = { id: number; name: string; email?: string }
 
 export default function App() {
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '/'
+
+  if (pathname === '/network') {
+    return <Network />
+  }
   const [items, setItems] = useState<Person[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -64,24 +70,14 @@ export default function App() {
             <button style={{ marginLeft: 12 }} onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('profile'); setToken(null); setProfile(null); }}>Logout</button>
           </div>
 
-          <div className="card">
-            {loading && <p>Loading...</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            {!loading && !error && (
-              <ul>
-                {items.map((it) => (
-                  <li key={it.id}>{it.name} — {it.email}</li>
-                ))}
-              </ul>
-            )}
-          </div>
-
           <section style={{ marginTop: 18 }}>
             <h2>Architecture Graph</h2>
+            <nav style={{ marginBottom: 8 }}><a href="/network">Open Network Page</a></nav>
             <Graph />
           </section>
         </>
       )}
+      
     </div>
     </AuthProvider>
   )

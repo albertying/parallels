@@ -41,6 +41,8 @@ async function connectDB() {
     process.exit(1);
   }
 }
+connectDB();
+  console.log(process.env.OPENAI_API_KEY)
 
 async function initLoginModel() {
   // If LOGIN_DB_URI provided, create a separate connection for auth storage
