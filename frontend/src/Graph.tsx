@@ -1,23 +1,19 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { nodes as rawNodes, links } from './data/graphData'
 
 type Props = { width?: number; height?: number }
 
 const Graph: React.FC<Props> = ({ width = 700, height = 360 }) => {
   const [hovered, setHovered] = useState<string | null>(null)
-<<<<<<< HEAD
   const [locked, setLocked] = useState<string | null>(null)
-=======
->>>>>>> 9adbd683cf0e38c638a4d28acbce341e3deac49f
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null)
+  const svgRef = useRef<SVGSVGElement | null>(null)
 
   const cx = width / 2
   const cy = height / 2
   const r = Math.min(width, height) / 2 - 60
 
-<<<<<<< HEAD
-=======
   // compute circular layout positions
->>>>>>> 9adbd683cf0e38c638a4d28acbce341e3deac49f
   const nodes = useMemo(
     () =>
       rawNodes.map((n, i) => {
@@ -33,12 +29,7 @@ const Graph: React.FC<Props> = ({ width = 700, height = 360 }) => {
 
   const find = (id: string) => nodes.find((n) => n.id === id)!
 
-<<<<<<< HEAD
   const connections = useMemo(() => {
-=======
-  // quick lookup of connections
-  const connected = useMemo(() => {
->>>>>>> 9adbd683cf0e38c638a4d28acbce341e3deac49f
     const map: Record<string, Set<string>> = {}
     for (const n of nodes) map[n.id] = new Set()
     for (const l of links) {
@@ -48,7 +39,6 @@ const Graph: React.FC<Props> = ({ width = 700, height = 360 }) => {
     return map
   }, [nodes])
 
-<<<<<<< HEAD
   const active = locked ?? hovered
 
   const linkIsActive = (l: typeof links[0]) => {
@@ -61,25 +51,29 @@ const Graph: React.FC<Props> = ({ width = 700, height = 360 }) => {
     return id === active || connections[active]?.has(id)
   }
 
-  const onNodeClick = (id: string) => {
-    setLocked((prev) => (prev === id ? null : id))
-=======
-  const isConnected = (link: typeof links[0]) => {
-    if (!hovered) return false
-    return link.source === hovered || link.target === hovered
->>>>>>> 9adbd683cf0e38c638a4d28acbce341e3deac49f
+  const onNodeClick = (id: string) => setLocked((prev) => (prev === id ? null : id))
+  const onSvgMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
+    const rect = svgRef.current?.getBoundingClientRect()
+    if (!rect) return
+    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top })
   }
 
+  const tooltipNode = hovered ? nodes.find((n) => n.id === hovered) ?? null : null
+  const neighbors = tooltipNode ? Array.from(connections[tooltipNode.id] || []) : []
+
   return (
-    <svg width={width} height={height} style={{ borderRadius: 6, background: '#fafafa' }}>
+    <div style={{ position: 'relative', width, height }}>
+      <svg
+        ref={svgRef}
+        width={width}
+        height={height}
+        style={{ borderRadius: 6, background: '#fafafa', display: 'block' }}
+        onMouseMove={onSvgMouseMove}
+      >
       <defs>
         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
           <feDropShadow dx="0" dy="2" stdDeviation="2" floodColor="#000" floodOpacity="0.12" />
         </filter>
-<<<<<<< HEAD
-
-=======
->>>>>>> 9adbd683cf0e38c638a4d28acbce341e3deac49f
         <marker
           id="arrow"
           markerWidth="10"
@@ -93,7 +87,6 @@ const Graph: React.FC<Props> = ({ width = 700, height = 360 }) => {
         </marker>
       </defs>
 
-<<<<<<< HEAD
       {links.map((l, i) => {
         const s = find(l.source)
         const t = find(l.target)
@@ -134,40 +127,10 @@ const Graph: React.FC<Props> = ({ width = 700, height = 360 }) => {
         const isHover = hovered === n.id
         const connected = nodeIsConnectedToActive(n.id)
         const visibleOpacity = connected ? 1 : 0.28
-
-=======
-      {/* links (drawn first so nodes sit on top) */}
-      {links.map((l, i) => {
-        const s = find(l.source)
-        const t = find(l.target)
-        const highlighted = isConnected(l)
-        const stroke = highlighted ? '#2563eb' : '#cbd5e1'
-        const strokeWidth = highlighted ? Math.max(2, (l.value || 1) * 2) : Math.max(1, (l.value || 1) * 1.2)
-        return (
-          <line
-            key={i}
-            x1={s.x}
-            y1={s.y}
-            x2={t.x}
-            y2={t.y}
-            stroke={stroke}
-            strokeWidth={strokeWidth}
-            strokeLinecap="round"
-            markerEnd="url(#arrow)"
-            opacity={highlighted || !hovered ? 1 : 0.25}
-          />
-        )
-      })}
-
-      {/* nodes */}
-      {nodes.map((n) => {
-        const isHover = hovered === n.id
->>>>>>> 9adbd683cf0e38c638a4d28acbce341e3deac49f
         return (
           <g
             key={n.id}
             transform={`translate(${n.x},${n.y})`}
-<<<<<<< HEAD
             style={{ cursor: 'pointer', opacity: visibleOpacity }}
             onMouseEnter={() => setHovered(n.id)}
             onMouseLeave={() => setHovered((prev) => (locked ? prev : null))}
@@ -179,18 +142,6 @@ const Graph: React.FC<Props> = ({ width = 700, height = 360 }) => {
               filter="url(#shadow)"
               stroke={isHover || locked === n.id ? '#1e40af' : 'transparent'}
               strokeWidth={isHover || locked === n.id ? 2 : 0}
-=======
-            style={{ cursor: 'pointer' }}
-            onMouseEnter={() => setHovered(n.id)}
-            onMouseLeave={() => setHovered(null)}
-          >
-            <circle
-              r={isHover ? 26 : 22}
-              fill={n.group === 1 ? '#60a5fa' : n.group === 2 ? '#34d399' : '#f59e0b'}
-              filter="url(#shadow)"
-              stroke={isHover ? '#1e40af' : 'transparent'}
-              strokeWidth={isHover ? 2 : 0}
->>>>>>> 9adbd683cf0e38c638a4d28acbce341e3deac49f
             />
             <text x={30} y={6} fontSize={12} fontFamily="Inter, Arial, sans-serif" fill="#0f172a">
               {n.label}
@@ -198,7 +149,43 @@ const Graph: React.FC<Props> = ({ width = 700, height = 360 }) => {
           </g>
         )
       })}
-    </svg>
+      </svg>
+
+      {tooltipNode && mousePos && (
+        <div
+          style={{
+            position: 'absolute',
+            left: Math.min(mousePos.x + 12, width - 220),
+            top: Math.max(mousePos.y + 12, 6),
+            width: 220,
+            background: 'white',
+            border: '1px solid #e2e8f0',
+            borderRadius: 8,
+            padding: '8px 10px',
+            boxShadow: '0 6px 18px rgba(2,6,23,0.08)',
+            pointerEvents: 'none',
+            fontSize: 12,
+            zIndex: 40,
+          }}
+        >
+          <div style={{ fontWeight: 700, marginBottom: 6 }}>{tooltipNode.label}</div>
+          <div style={{ color: '#475569', marginBottom: 6 }}>{tooltipNode.group ? (tooltipNode.group === 1 ? 'Application' : tooltipNode.group === 2 ? 'Infrastructure' : 'Indexing') : 'Unknown'}</div>
+          <div style={{ color: '#0f172a', fontSize: 12, marginBottom: 6 }}>Connections: {neighbors.length}</div>
+          {neighbors.length > 0 && (
+            <div style={{ color: '#334155' }}>
+              {neighbors.slice(0, 6).map((nid) => {
+                const n = nodes.find((x) => x.id === nid)
+                return (
+                  <div key={nid} style={{ marginBottom: 4 }}>
+                    • {n?.label || nid}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   )
 }
 
