@@ -15,11 +15,51 @@ function randomVector(dim) {
 }
 
 const sampleUsers = [
-  { name: 'Alice', email: 'alice@example.com', interests: ['hiking', 'photography'] },
-  { name: 'Bob', email: 'bob@example.com', interests: ['gaming', 'tech'] },
-  { name: 'Carol', email: 'carol@example.com', interests: ['cooking', 'travel'] },
-  { name: 'Dan', email: 'dan@example.com', interests: ['music', 'guitar'] },
-  { name: 'Eve', email: 'eve@example.com', interests: ['reading', 'writing'] }
+  {
+    name: 'Alice',
+    email: 'alice@example.com',
+    age: 25,
+    major: 'Geography',
+    hobby: 'hiking',
+    bio: 'Outdoor photographer who loves trails and landscapes',
+    interests: ['hiking', 'photography']
+  },
+  {
+    name: 'Bob',
+    email: 'bob@example.com',
+    age: 22,
+    major: 'Computer Science',
+    hobby: 'gaming',
+    bio: 'Indie game developer and tech enthusiast',
+    interests: ['gaming', 'tech']
+  },
+  {
+    name: 'Carol',
+    email: 'carol@example.com',
+    age: 29,
+    major: 'Culinary Arts',
+    hobby: 'travel',
+    bio: 'Chef who loves exploring world cuisines',
+    interests: ['cooking', 'travel']
+  },
+  {
+    name: 'Dan',
+    email: 'dan@example.com',
+    age: 27,
+    major: 'Music',
+    hobby: 'guitar',
+    bio: 'Musician and songwriter playing in local venues',
+    interests: ['music', 'guitar']
+  },
+  {
+    name: 'Eve',
+    email: 'eve@example.com',
+    age: 24,
+    major: 'English',
+    hobby: 'reading',
+    bio: 'Writer and editor who enjoys short stories',
+    interests: ['reading', 'writing']
+  }
 ];
 
 const client = new MongoClient(uri);

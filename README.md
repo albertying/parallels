@@ -129,3 +129,31 @@ node src/db/findSimilarUsers.mjs --vector "0.1,0.2,0.3,..." --k 5
 Notes:
 - The example scripts seed mock (random) embeddings. Replace with real embeddings from your embedding model (OpenAI, etc.) and ensure vectors are the same dimension and normalization strategy you choose.
 - The aggregation uses the Atlas Search `knnBeta` operator; this requires an Atlas Search index configured as shown above. If you run a local MongoDB without Atlas Search, the `$search` stage will fail.
+
+### Schema (example)
+
+Each user document stores profile fields and a vector embedding used for similarity search. Example document:
+
+```json
+{
+  "_id": "ObjectId(...)",
+  "name": "Alice",
+  "email": "alice@example.com",
+  "age": 25,
+  "major": "Geography",
+  "hobby": "hiking",
+  "bio": "Outdoor photographer who loves trails and landscapes",
+  "interests": ["hiking", "photography"],
+  "embedding": [0.003, -0.112, ...],
+  "createdAt": "2025-11-23T..."
+}
+```
+
+Indexes you should create:
+
+- Standard indexes:
+  - `db.users.createIndex({ email: 1 }, { unique: true })`
+  - `db.users.createIndex({ createdAt: -1 })`
+- Atlas Search vector index (create via Atlas UI): configure a `knnVector` mapping for the `embedding` field and set `dimensions` to match `EMBEDDING_DIM`.
+
+If you'd like, I can add TypeScript types for the user schema and convert the seed/query scripts to `.ts` files.

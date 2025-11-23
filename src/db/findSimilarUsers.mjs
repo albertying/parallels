@@ -56,7 +56,18 @@ async function main() {
         }
       }
     },
-    { $project: { score: { $meta: 'searchScore' }, name: 1, email: 1, interests: 1 } },
+    {
+      $project: {
+        score: { $meta: 'searchScore' },
+        name: 1,
+        email: 1,
+        age: 1,
+        major: 1,
+        hobby: 1,
+        bio: 1,
+        interests: 1
+      }
+    },
     { $limit: k }
   ];
 
