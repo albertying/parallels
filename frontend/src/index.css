@@ -1,18 +1,3 @@
-<<<<<<< HEAD
-body {
-  margin: 0;
-  font-family: Inter, Arial, sans-serif;
-  background: #ffffff;
-  color: #0f172a;
-}
-
-h1 {
-  margin: 0 0 8px 0;
-}
-
-p {
-  margin: 0 0 16px 0;
-=======
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -132,5 +117,4 @@ p {
   body {
     @apply bg-background text-foreground;
   }
->>>>>>> 9adbd683cf0e38c638a4d28acbce341e3deac49f
 }
