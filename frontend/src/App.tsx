@@ -1,33 +1,36 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
+import Graph from './Graph'
 
-function App() {
-  const [count, setCount] = useState(0)
+type Person = { id: number; name: string; email?: string }
+
+export default function App() {
+  const [items, setItems] = useState<Person[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await fetch('http://localhost:4000/api/query')
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const body = await res.json()
+        setItems(body.data || [])
+      } catch (e: any) {
+        setError(e.message || 'Fetch error')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [])
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div style={{ padding: 20 }}>
+      <h1>Parallels — DB Query + Graph</h1>
+
       <div className="card">
         {loading && <p>Loading...</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -44,10 +47,7 @@ function App() {
         <h2>Architecture Graph</h2>
         <Graph />
       </section>
-
-      <p className="read-the-docs">Data fetched from <code>/api/query</code></p>
-    </>
+    </div>
   )
 }
-
-export default App
+ 
