@@ -12,9 +12,13 @@
   "type": "commonjs",
   "dependencies": {
     "cors": "^2.8.5",
+<<<<<<< HEAD
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "mongoose": "^9.0.0",
     "openai": "^6.9.1"
+=======
+    "express": "^5.1.0"
+>>>>>>> main
   }
 }

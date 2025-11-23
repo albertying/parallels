@@ -28,6 +28,24 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <div className="card">
+        {loading && <p>Loading...</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {!loading && !error && (
+          <ul>
+            {items.map((it) => (
+              <li key={it.id}>{it.name} — {it.email}</li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <section style={{ marginTop: 18 }}>
+        <h2>Architecture Graph</h2>
+        <Graph />
+      </section>
+
+      <p className="read-the-docs">Data fetched from <code>/api/query</code></p>
     </>
   )
 }
