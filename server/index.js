@@ -29,6 +29,7 @@ const User = require('./models/User');
 const { getLoginModel } = require('./models/Login');
 let Login = null; // will be initialized after DB connect (can use separate connection)
 
+
 async function connectDB() {
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
@@ -60,6 +61,7 @@ async function initLoginModel() {
   console.log('Login model initialized on main DB connection');
 }
 
+
 if (!process.env.OPENAI_API_KEY) {
   console.warn('Warning: OPENAI_API_KEY not set. Embedding endpoint will not work until you set OPENAI_API_KEY in .env or the environment.');
 }
@@ -70,6 +72,7 @@ app.use(cors());
 // Use the `User` model from models/User.js as the Profile model (stored in `profiles` collection)
 const Profile = User;
 
+app.use(cors());
 app.use(express.json());
 
 function generateToken(user) {
@@ -130,6 +133,7 @@ app.post('/auth/register', async (req, res) => {
 
     // respond with minimal info — do not send passwordHash
     res.status(201).json({ message: 'Auth record created', id: authDoc._id, username: authDoc.username });
+
   } catch (err) {
     console.error('Register error:', err);
     res.status(500).json({ error: 'Registration failed' });
@@ -157,11 +161,13 @@ app.post('/auth/login', async (req, res) => {
     const profile = await Profile.findById(profileId).select('-embedding');
 
     res.json({ token, profile: profile || null });
+
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Login failed' });
   }
 });
+
 // Create profile with embedding
 app.post("/profile", async (req, res) => {
   try {
@@ -259,6 +265,7 @@ app.post('/embed', authenticateToken, async (req, res) => {
 connectDB()
   .then(async () => {
     await initLoginModel();
+
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

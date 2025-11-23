@@ -1,0 +1,7 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "backup of original package.json with merge markers",
+  "main": "index.js",
+  "type": "commonjs"
+}
