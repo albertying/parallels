@@ -36,8 +36,13 @@ export default function Form() {
 
       const data = await response.json();
       console.log("Profile Created:", data);
+      console.log(data);
+      // 👉 Store user/profile ID into localStorage
+      if (data.profile.id) {
+        localStorage.setItem("profileId", data.profile.id);
+        console.log("Stored profile ID:", data.profile.id);
+      }
 
-      // Reset form or show success message
       alert("Profile created successfully!");
     } catch (error) {
       console.error("Error creating profile:", error);

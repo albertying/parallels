@@ -4,14 +4,16 @@ import "./index.css";
 import Form from "./routes/Form.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
-import Graph from "./Graph.tsx";
+import Network from "./Network.tsx";
+import ProfilePage from "./Profile.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Form />} />
-        <Route path="/network" element={<Graph />} />
+        <Route path="/network" element={<Network />} />
+        <Route path="/profile/:id" element={<ProfilePage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
