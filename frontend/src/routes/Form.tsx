@@ -3,8 +3,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useNavigate } from "react-router-dom";
 
 export default function Form() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     age: "",
@@ -36,8 +38,7 @@ export default function Form() {
 
       const data = await response.json();
       console.log("Profile Created:", data);
-      console.log(data);
-      // 👉 Store user/profile ID into localStorage
+
       if (data.profile.id) {
         localStorage.setItem("profileId", data.profile.id);
         console.log("Stored profile ID:", data.profile.id);
@@ -97,7 +98,7 @@ export default function Form() {
                 name="interests"
                 value={form.interests}
                 onChange={handleChange}
-                placeholder="e.g. astronomy, psycohlogy, European culture"
+                placeholder="e.g. astronomy, psychology, European culture"
               />
             </div>
 
@@ -122,6 +123,13 @@ export default function Form() {
             </div>
 
             <Button type="submit">Create Profile</Button>
+            <Button
+              type="button"
+              className="ml-5"
+              onClick={() => navigate("/network")}
+            >
+              Go to Network
+            </Button>
           </form>
         </CardContent>
       </Card>
